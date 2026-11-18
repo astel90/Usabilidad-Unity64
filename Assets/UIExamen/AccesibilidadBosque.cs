@@ -19,10 +19,10 @@ public sealed class AccesibilidadBosque : MonoBehaviour
     private Image[] estrellas;
     [SerializeField] private Sprite estrellaLlena, estrellaVacia;
     private Font fuente;
-    private Text progreso, objetivo, aviso, subtitulo, textoEscala, textoSubtitulos, textoPosicion;
+    private Text progreso, objetivo, aviso, subtitulo, textoEscala, textoSubtitulos, textoPosicion, textoDaltonismo;
     private RectTransform cajaSubtitulo, opciones;
     private Button primerBoton;
-    private bool subtitulos = true, arriba, menuAbierto;
+    private bool subtitulos = true, arriba, menuAbierto, daltonismo;
     private bool cursorBloqueado, controlarMirada, cursorVisible;
     private CursorLockMode bloqueoAnterior;
     private float tiempoAnterior, avisoHasta;
@@ -71,12 +71,13 @@ public sealed class AccesibilidadBosque : MonoBehaviour
         Boton(transform, "F1 · Accesibilidad", new Vector2(1, 1),
             new Vector2(-140, -42), AlternarMenu);
         opciones = Caja("Opciones de accesibilidad", transform, new Vector2(.5f, .5f),
-            Vector2.zero, new Vector2(560, 322));
-        primerBoton = Boton(opciones, "", new Vector2(.5f, .5f), new Vector2(0, 102), CambiarEscala, 445);
+            Vector2.zero, new Vector2(560, 382));
+        primerBoton = Boton(opciones, "", new Vector2(.5f, .5f), new Vector2(0, 132), CambiarEscala, 445);
         textoEscala = primerBoton.GetComponentInChildren<Text>();
-        textoSubtitulos = Boton(opciones, "", new Vector2(.5f, .5f), new Vector2(0, 36), CambiarSubtitulos, 445).GetComponentInChildren<Text>();
-        textoPosicion = Boton(opciones, "", new Vector2(.5f, .5f), new Vector2(0, -30), CambiarPosicion, 445).GetComponentInChildren<Text>();
-        Boton(opciones, "Volver al juego", new Vector2(.5f, .5f), new Vector2(0, -96), AlternarMenu, 445);
+        textoSubtitulos = Boton(opciones, "", new Vector2(.5f, .5f), new Vector2(0, 66), CambiarSubtitulos, 445).GetComponentInChildren<Text>();
+        textoPosicion = Boton(opciones, "", new Vector2(.5f, .5f), new Vector2(0, 0), CambiarPosicion, 445).GetComponentInChildren<Text>();
+        textoDaltonismo = Boton(opciones, "", new Vector2(.5f, .5f), new Vector2(0, -66), CambiarDaltonismo, 445).GetComponentInChildren<Text>();
+        Boton(opciones, "Volver al juego", new Vector2(.5f, .5f), new Vector2(0, -132), AlternarMenu, 445);
         opciones.gameObject.SetActive(false);
 
         audioAviso = gameObject.AddComponent<AudioSource>();
@@ -95,6 +96,7 @@ public sealed class AccesibilidadBosque : MonoBehaviour
         mensaje = "Guía del bosque · Reúne las estrellas, esquiva las trampas y busca el diamante.";
         AplicarOpciones();
         ActualizarProgreso();
+        AplicarPaleta();
     }
 
     private void Update()
@@ -175,6 +177,25 @@ public sealed class AccesibilidadBosque : MonoBehaviour
     {
         arriba = !arriba;
         AplicarOpciones();
+    }
+
+    private void CambiarDaltonismo()
+    {
+        daltonismo = !daltonismo;
+        AplicarPaleta();
+    }
+
+    private void AplicarPaleta()
+    {
+        textoDaltonismo.text = daltonismo ? "Daltonismo · Activado" : "Daltonismo · Desactivado";
+        Color fondo = daltonismo ? Color.black : new Color(.045f, .065f, .09f, .96f);
+        progreso.transform.parent.GetComponent<Image>().color = fondo;
+        objetivo.transform.parent.GetComponent<Image>().color = fondo;
+        aviso.transform.parent.GetComponent<Image>().color = fondo;
+        cajaSubtitulo.GetComponent<Image>().color = fondo;
+        opciones.GetComponent<Image>().color = fondo;
+        objetivo.color = daltonismo ? new Color32(111, 226, 255, 255) : Color.white;
+        aviso.color = daltonismo ? new Color32(255, 228, 98, 255) : Color.white;
     }
 
     private void AplicarOpciones()
