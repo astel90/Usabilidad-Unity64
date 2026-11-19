@@ -11,22 +11,19 @@ public sealed class AccesibilidadBosque : MonoBehaviour
 {
     [SerializeField] private RectTransform indicadorEstrellas;
 
-    private readonly int[] tamanos = { 20, 25, 30 };
-    private readonly string[] escalas = { "100 %", "125 %", "150 %" };
     private GameManager juego;
     private TrapController[] trampas;
     private StarterAssetsInputs personaje;
     private Image[] estrellas;
     [SerializeField] private Sprite estrellaLlena, estrellaVacia;
     private Font fuente;
-    private Text progreso, objetivo, aviso, subtitulo, textoEscala, textoSubtitulos, textoPosicion, textoDaltonismo;
+    private Text progreso, objetivo, aviso, subtitulo, textoDaltonismo;
     private RectTransform cajaSubtitulo, opciones;
     private Button primerBoton;
-    private bool subtitulos = true, arriba, menuAbierto, daltonismo;
+    private bool menuAbierto, daltonismo;
     private bool cursorBloqueado, controlarMirada, cursorVisible;
     private CursorLockMode bloqueoAnterior;
     private float tiempoAnterior, avisoHasta;
-    private int escala;
     private AudioSource audioAviso;
     private AudioClip tono;
     private bool cercaDeTrampa;
@@ -71,13 +68,10 @@ public sealed class AccesibilidadBosque : MonoBehaviour
         Boton(transform, "F1 · Accesibilidad", new Vector2(1, 1),
             new Vector2(-140, -42), AlternarMenu);
         opciones = Caja("Opciones de accesibilidad", transform, new Vector2(.5f, .5f),
-            Vector2.zero, new Vector2(560, 382));
-        primerBoton = Boton(opciones, "", new Vector2(.5f, .5f), new Vector2(0, 132), CambiarEscala, 445);
-        textoEscala = primerBoton.GetComponentInChildren<Text>();
-        textoSubtitulos = Boton(opciones, "", new Vector2(.5f, .5f), new Vector2(0, 66), CambiarSubtitulos, 445).GetComponentInChildren<Text>();
-        textoPosicion = Boton(opciones, "", new Vector2(.5f, .5f), new Vector2(0, 0), CambiarPosicion, 445).GetComponentInChildren<Text>();
-        textoDaltonismo = Boton(opciones, "", new Vector2(.5f, .5f), new Vector2(0, -66), CambiarDaltonismo, 445).GetComponentInChildren<Text>();
-        Boton(opciones, "Volver al juego", new Vector2(.5f, .5f), new Vector2(0, -132), AlternarMenu, 445);
+            Vector2.zero, new Vector2(560, 184));
+        primerBoton = Boton(opciones, "", new Vector2(.5f, .5f), new Vector2(0, 33), CambiarDaltonismo, 445);
+        textoDaltonismo = primerBoton.GetComponentInChildren<Text>();
+        Boton(opciones, "Volver al juego", new Vector2(.5f, .5f), new Vector2(0, -33), AlternarMenu, 445);
         opciones.gameObject.SetActive(false);
 
         audioAviso = gameObject.AddComponent<AudioSource>();
@@ -94,7 +88,7 @@ public sealed class AccesibilidadBosque : MonoBehaviour
         StarCollectible.Recogido += AlRecoger;
         TrapController.Activada += AlActivarTrampa;
         mensaje = "Guía del bosque · Reúne las estrellas, esquiva las trampas y busca el diamante.";
-        AplicarOpciones();
+        InicializarTexto();
         ActualizarProgreso();
         AplicarPaleta();
     }
@@ -161,24 +155,6 @@ public sealed class AccesibilidadBosque : MonoBehaviour
             estrellas[i].sprite = i < cantidad ? estrellaLlena : estrellaVacia;
     }
 
-    private void CambiarEscala()
-    {
-        escala = (escala + 1) % tamanos.Length;
-        AplicarOpciones();
-    }
-
-    private void CambiarSubtitulos()
-    {
-        subtitulos = !subtitulos;
-        AplicarOpciones();
-    }
-
-    private void CambiarPosicion()
-    {
-        arriba = !arriba;
-        AplicarOpciones();
-    }
-
     private void CambiarDaltonismo()
     {
         daltonismo = !daltonismo;
@@ -198,16 +174,10 @@ public sealed class AccesibilidadBosque : MonoBehaviour
         aviso.color = daltonismo ? new Color32(255, 228, 98, 255) : Color.white;
     }
 
-    private void AplicarOpciones()
+    private void InicializarTexto()
     {
         foreach (Text etiqueta in GetComponentsInChildren<Text>(true))
-            etiqueta.fontSize = tamanos[escala];
-        textoEscala.text = "Tamaño del texto · " + escalas[escala];
-        textoSubtitulos.text = subtitulos ? "Subtítulos · Sí" : "Subtítulos · No";
-        textoPosicion.text = arriba ? "Posición · Arriba" : "Posición · Abajo";
-        cajaSubtitulo.gameObject.SetActive(subtitulos);
-        cajaSubtitulo.anchorMin = cajaSubtitulo.anchorMax = new Vector2(.5f, arriba ? 1 : 0);
-        cajaSubtitulo.anchoredPosition = new Vector2(0, arriba ? -270 : 72);
+            etiqueta.fontSize = 20;
         subtitulo.text = mensaje;
     }
 
