@@ -17,10 +17,10 @@ public sealed class AccesibilidadBosque : MonoBehaviour
     private Image[] estrellas;
     [SerializeField] private Sprite estrellaLlena, estrellaVacia;
     private Font fuente;
-    private Text progreso, objetivo, aviso, subtitulo, textoDaltonismo;
+    private Text progreso, objetivo, aviso, subtitulo, textoDaltonismo, textoSubtitulos;
     private RectTransform cajaSubtitulo, opciones;
     private Button primerBoton;
-    private bool menuAbierto, daltonismo;
+    private bool menuAbierto, daltonismo, subtitulos = true;
     private bool cursorBloqueado, controlarMirada, cursorVisible;
     private CursorLockMode bloqueoAnterior;
     private float tiempoAnterior, avisoHasta;
@@ -68,10 +68,11 @@ public sealed class AccesibilidadBosque : MonoBehaviour
         Boton(transform, "F1 · Accesibilidad", new Vector2(1, 1),
             new Vector2(-140, -42), AlternarMenu);
         opciones = Caja("Opciones de accesibilidad", transform, new Vector2(.5f, .5f),
-            Vector2.zero, new Vector2(560, 184));
-        primerBoton = Boton(opciones, "", new Vector2(.5f, .5f), new Vector2(0, 33), CambiarDaltonismo, 445);
+            Vector2.zero, new Vector2(560, 250));
+        primerBoton = Boton(opciones, "", new Vector2(.5f, .5f), new Vector2(0, 66), CambiarDaltonismo, 445);
         textoDaltonismo = primerBoton.GetComponentInChildren<Text>();
-        Boton(opciones, "Volver al juego", new Vector2(.5f, .5f), new Vector2(0, -33), AlternarMenu, 445);
+        textoSubtitulos = Boton(opciones, "", new Vector2(.5f, .5f), Vector2.zero, CambiarSubtitulos, 445).GetComponentInChildren<Text>();
+        Boton(opciones, "Volver al juego", new Vector2(.5f, .5f), new Vector2(0, -66), AlternarMenu, 445);
         opciones.gameObject.SetActive(false);
 
         audioAviso = gameObject.AddComponent<AudioSource>();
@@ -89,6 +90,7 @@ public sealed class AccesibilidadBosque : MonoBehaviour
         TrapController.Activada += AlActivarTrampa;
         mensaje = "Guía del bosque · Reúne las estrellas, esquiva las trampas y busca el diamante.";
         InicializarTexto();
+        AplicarSubtitulos();
         ActualizarProgreso();
         AplicarPaleta();
     }
@@ -153,6 +155,18 @@ public sealed class AccesibilidadBosque : MonoBehaviour
         objetivo.text = cantidad >= total ? "[◇] Encuentra el diamante" : "[★] Reúne las estrellas";
         for (int i = 0; i < estrellas.Length; i++)
             estrellas[i].sprite = i < cantidad ? estrellaLlena : estrellaVacia;
+    }
+
+    private void CambiarSubtitulos()
+    {
+        subtitulos = !subtitulos;
+        AplicarSubtitulos();
+    }
+
+    private void AplicarSubtitulos()
+    {
+        textoSubtitulos.text = subtitulos ? "Subtítulos · Sí" : "Subtítulos · No";
+        cajaSubtitulo.gameObject.SetActive(subtitulos);
     }
 
     private void CambiarDaltonismo()
